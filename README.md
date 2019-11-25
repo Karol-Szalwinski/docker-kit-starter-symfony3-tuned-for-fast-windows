@@ -15,7 +15,7 @@ Each container is one linux distribution with one component
 Each container have one root access by default
 You can install some extras by editing Dockerfile.
 
-##Start docker
+## Start docker
 In host(Windows/Mac) cli
 docker-compose build
 docker-compose up -d
@@ -44,7 +44,7 @@ When it's done, we will get the project to the root path.
 cp -Rf /var/www/symfony/temp-folder/. . &&
 rm -Rf /var/www/symfony/temp-folder
 
-##Use Project
+## Use project
 
 Now you can open your project:
 

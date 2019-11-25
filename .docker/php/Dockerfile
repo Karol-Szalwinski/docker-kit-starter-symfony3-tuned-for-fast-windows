@@ -38,6 +38,7 @@ RUN passwd -d dev
 RUN mkdir /app-vendor
 RUN mkdir /app-cache
 RUN mkdir /app-logs
+RUN mkdir /var/www/.composer
 
 RUN chown www-data:www-data /app-vendor
 RUN chown www-data:www-data /app-cache
@@ -52,7 +53,6 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
 RUN echo "dev ALL=(ALL) ALL" > /etc/sudoers
 
 WORKDIR /var/www/symfony
-
 
 EXPOSE 9000
 CMD ["php-fpm"]

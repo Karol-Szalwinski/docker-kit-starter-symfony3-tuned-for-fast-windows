@@ -1,4 +1,4 @@
-## Docker starter kit for Symfony 3.4 tuned up for faster work in Windows Docker.##
+## Docker starter kit for Symfony 3.4 tuned up for faster work in Windows Docker. ##
 
 Project is ready to work with Symfony 3.4 Includes PHP7.3 + MySQL 5.6 + phpMyadmin + maildev + composer
 

@@ -1,0 +1,55 @@
+version: '3'
+services:
+    apache:
+        build: .docker/apache
+        container_name: symfony_apache_debian
+        ports:
+          - 80:80
+        volumes:
+          - .docker/config/vhosts:/etc/apache2/sites-enabled:cached
+          - .:/var/www/symfony:cached
+        depends_on:
+          - php
+
+    mysql:
+        image: mysql:5.6
+        command: "--default-authentication-plugin=mysql_native_password"
+        container_name: symfony_mysql_56
+        volumes:
+            - .docker/database/db:/var/lib/mysql:cached
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: symfony
+            MYSQL_USER: symfony
+            MYSQL_PASSWORD: symfony
+
+    php:
+        build: .docker/php
+        container_name: symfony_php_73
+        volumes:
+          - .:/var/www/symfony:cached
+          - /app-vendor
+          - /app-cache
+          - /app-logs
+        environment:
+          - maildev_host=symfony_maildev
+        depends_on:
+          - maildev
+          - mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: symfony_phpmyadmin
+        environment:
+          PMA_HOST: mysql
+          PMA_PORT: 3306
+        ports:
+            - 8080:80
+        links:
+            - mysql
+
+    maildev:
+        image: djfarrelly/maildev
+        container_name: symfony_maildev
+        ports:
+          - 8001:80

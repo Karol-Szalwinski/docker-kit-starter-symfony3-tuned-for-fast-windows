@@ -64,5 +64,6 @@ RUN echo "dev ALL=(ALL) ALL" > /etc/sudoers
 
 WORKDIR /var/www/symfony
 
+
 EXPOSE 9000
 CMD ["php-fpm"]

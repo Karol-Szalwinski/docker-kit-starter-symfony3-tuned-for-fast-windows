@@ -1,4 +1,4 @@
-FROM php:7.3.9-fpm
+FROM php:7.3.9-fpm-stretch
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends vim curl debconf subversion git apt-transport-https apt-utils \
@@ -10,12 +10,25 @@ RUN apt-get update \
 RUN apt-get install -y zip libzip-dev \
     && docker-php-ext-configure zip --with-libzip \
     && docker-php-ext-install zip
+	
+	
+# Install WKHTMLTOPDF
+RUN apt-get update && apt-get remove -y libqt4-dev qt4-dev-tools wkhtmltopdf && apt-get autoremove -y
+RUN apt-get install openssl build-essential libssl1.0-dev libxrender-dev git-core libx11-dev libxext-dev libfontconfig1-dev libfreetype6-dev fontconfig -y
+RUN mkdir /var/wkhtmltopdf
+RUN cd /var/wkhtmltopdf && wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && tar xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN cp /var/wkhtmltopdf/wkhtmltox/bin/wkhtmltopdf /bin/wkhtmltopdf && cp /var/wkhtmltopdf/wkhtmltox/bin/wkhtmltoimage /bin/wkhtmltoimage
+RUN chown -R www-data:www-data /var/wkhtmltopdf
+RUN chmod +x /bin/wkhtmltopdf && chmod +x /bin/wkhtmltoimage
 
+# Install PDO
 RUN docker-php-ext-install pdo pdo_mysql zip
 
+# Prepare Apache files
 COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm-pool.conf 	/usr/local/etc/php/pool.d/www.conf
 
+# Install Composer
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 	mv composer.phar /usr/local/bin/composer
 
@@ -31,13 +44,11 @@ RUN	echo "deb https://deb.nodesource.com/node_6.x jessie main" >> /etc/apt/sourc
 	apt-get install -y --force-yes nodejs && \
 	rm -f /etc/apt/sources.list.d/nodejs.list
 
-RUN groupadd dev -g 999
-RUN useradd dev -g dev -d /home/dev -m
-RUN passwd -d dev
-
+#Prepare Symfony folders
 RUN mkdir /app-vendor
 RUN mkdir /app-cache
 RUN mkdir /app-logs
+RUN mkdir /var/www/.composer
 
 RUN chown www-data:www-data /app-vendor
 RUN chown www-data:www-data /app-cache
